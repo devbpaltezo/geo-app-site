@@ -1,9 +1,8 @@
 import React, { useState } from 'react';
 import { useHistory } from 'react-router-dom';
+import { postFetch } from '../../modules/fetch';
 
-import {API_URL} from '../configs/server';
-
-import './styles/Login.css';
+import './css/index.css';
 
 const Login = () => {
     const [email, setEmail] = useState('');
@@ -14,26 +13,30 @@ const Login = () => {
     const handleLogin = async (e) => {
         e.preventDefault();
         try {
-            const response = await fetch(`${API_URL}/auth/login`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
+
+            postFetch({
+                url: '/auth/login',
+                body: { email, password },
+                callback: (data) => {
+                    if (data.success) {
+                        // Store the authentication token in localStorage
+                        localStorage.setItem('authToken', data.token);
+                        // Redirect to home page
+                        history.push('/home');
+                        window.location.href = '/home';
+                    } else {
+                        // Handle login failure (e.g., show error message)
+                        console.log(data);
+                        alert('Invalid credentials. Please try again.');
+                    }
                 },
-                body: JSON.stringify({ email, password }),
-            });
-    
-            const data = await response.json();
+                onError: (error) => {
+                    console.log(error);
+                    setError(error);
+                }
+            })
+
             
-            if (data.success) {
-                // Store the authentication token in localStorage
-                localStorage.setItem('authToken', data.token);
-                // Redirect to home page
-                history.push('/home');
-            } else {
-                // Handle login failure (e.g., show error message)
-                console.log(data);
-                alert('Invalid credentials. Please try again.');
-            }
         } catch (error) {
             console.log(error);
             setError(error);

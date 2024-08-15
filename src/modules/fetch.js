@@ -16,7 +16,42 @@ export const getFetch = async (url, callback, onError = defaultErrorHandler) => 
         .catch(error => onError(error));
 }
 
-export const deleteFetch = async ({url, body, callback, onError = defaultErrorHandler}) => {
+export const postFetch = async ({
+    url, 
+    body, 
+    auth = false,
+    callback, 
+    onError = defaultErrorHandler
+}) => {
+
+    const token = localStorage.getItem('authToken');
+    let headers = {
+        'Content-Type': 'application/json',
+    }
+
+    if(auth) {
+        headers = {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+        }
+    }
+
+    fetch(`${API_URL}${url}`, {
+        method:'POST',
+        headers: headers,
+        body: JSON.stringify(body),
+        }) 
+        .then(response => response.json())
+        .then(data => callback(data))
+        .catch(error => onError(error));
+}
+
+export const deleteFetch = async ({
+    url, 
+    body, 
+    callback, 
+    onError = defaultErrorHandler
+}) => {
     const token = localStorage.getItem('authToken');
     fetch(`${API_URL}${url}`, {
         method:'DELETE',

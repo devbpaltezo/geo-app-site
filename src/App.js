@@ -1,7 +1,9 @@
 import React from 'react';
 import { BrowserRouter as Router, Route, Switch, Redirect } from 'react-router-dom';
-import Login from './components/Login';
-import Home from './components/Home';
+// import Login from './views/Login';
+// import Home from './views/Home';
+
+import {Home, Login} from './views';
 
 const App = () => {
     // Check if the user is authenticated

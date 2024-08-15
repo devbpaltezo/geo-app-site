@@ -2,6 +2,8 @@
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
+## Make Sure the geo-app-server is already running!!!
+
 ## Available Scripts
 
 In the project directory, you can run:

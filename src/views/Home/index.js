@@ -1,20 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { deleteFetch, getFetch } from '../../modules/fetch';
 
-import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
-import 'leaflet/dist/leaflet.css';
-import L from 'leaflet';
+import './css/index.css';
 
-import { deleteFetch, getFetch } from '../modules/fetch';
-import './styles/Home.css';
-
-// Fix marker icon issue with leaflet
-delete L.Icon.Default.prototype._getIconUrl;
-L.Icon.Default.mergeOptions({
-    iconRetinaUrl: 'https://unpkg.com/leaflet@1.7.1/dist/images/marker-icon-2x.png',
-    iconUrl: 'https://unpkg.com/leaflet@1.7.1/dist/images/marker-icon.png',
-    shadowUrl: 'https://unpkg.com/leaflet@1.7.1/dist/images/marker-shadow.png',
-});
+import ListItem from './components/ListItem';
+import Map from './components/Map';
 
 const Home = () => {
 
@@ -47,7 +38,6 @@ const Home = () => {
     };
 
     const getGeoInfo = (ip) => {
-        // Implement your function to get geo info based on the IP address
         getFetch(`/geo/${ip}`, (data) => {
 
             setGeoInfo(data);
@@ -112,6 +102,7 @@ const Home = () => {
     const handleLogout = () => {
         localStorage.removeItem('authToken');
         history.push('/login');
+        window.location.href = '/login';
     };
 
     return (
@@ -143,17 +134,7 @@ const Home = () => {
                             </button>
                         </div>
                         {geoInfo && (
-                            <MapContainer center={mapCenter} zoom={2} style={{ height: '400px', width: '100%' }}>
-                                <TileLayer
-                                    url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                                    attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-                                />
-                                <Marker position={mapCenter}>
-                                    <Popup>
-                                        {geoInfo.location}
-                                    </Popup>
-                                </Marker>
-                            </MapContainer>
+                            <Map center={mapCenter} geoInfo={geoInfo} />
                         )}
                     </div>
                     <div className="history-section">
@@ -175,15 +156,13 @@ const Home = () => {
                                         {localGeoInfo.ip} - {localGeoInfo.location} <small>(Your location)</small>
                                     </li>}
                                 {history.length > 0 && history.map((entry) => (
-                                    <li key={entry.id} className="history-item" onClick={() => handleSelectLocation(entry)}>
-                                        <input
-                                            type="checkbox"
-                                            checked={selectedHistory.includes(entry.id)}
-                                            onChange={() => handleCheckboxChange(entry.id)}
-                                            className="history-checkbox"
-                                        />
-                                        {entry.ip} - {entry.location}
-                                    </li>
+                                    <ListItem
+                                        key={entry.id}
+                                        entry={entry}
+                                        isSelected={selectedHistory.includes(entry.id)}
+                                        onSelect={() => handleCheckboxChange(entry.id)}
+                                        onClick={() => handleSelectLocation(entry)}
+                                    />
                                 ))}
                             </ul>
                         </div>
