@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
-import { deleteFetch, getFetch } from '../../modules/fetch';
+import { deleteFetch, getFetch, getClientIP } from '../../utils/fetch';
 
 import './css/index.css';
 
@@ -18,14 +17,7 @@ const Home = () => {
 
     useEffect(() => {
         // Fetch the client's IP address
-        axios.get('https://api.ipify.org?format=json')
-            .then(response => {
-                const ip = response.data.ip;
-                setIpAddress(ip);
-                getGeoInfo(ip);
-            })
-            .catch(error => console.error('Error fetching IP address:', error));
-
+        getClientIP(setIpAddress, getGeoInfo);
         fetchSearchHistory();
     }, []);
 

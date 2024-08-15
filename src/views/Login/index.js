@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useHistory } from 'react-router-dom';
-import { postFetch } from '../../modules/fetch';
+import { postFetch } from '../../utils/fetch';
 
 import './css/index.css';
 

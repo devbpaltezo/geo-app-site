@@ -1,12 +1,13 @@
-import {API_URL} from '../configs/server';
+import axios from 'axios';
+import {API_URL, CLIENT_IP_API_URL} from '../configs/server';
+
+const token = localStorage.getItem('authToken');
 
 const defaultErrorHandler = (error) => {
     console.error('There was an error:', error);
 }
 
 export const getFetch = async (url, callback, onError = defaultErrorHandler) => {
-    const token = localStorage.getItem('authToken');
-
     fetch(`${API_URL}${url}`, {
         headers: {
             'Authorization': `Bearer ${token}`
@@ -14,6 +15,17 @@ export const getFetch = async (url, callback, onError = defaultErrorHandler) => 
         .then(response => response.json())
         .then(data => callback(data))
         .catch(error => onError(error));
+}
+
+export const getClientIP = async (setIpAddress, getGeoInfo) => {
+    try {
+        const response = await axios.get(`${CLIENT_IP_API_URL}`);
+        const ip = response.data.ip;
+        setIpAddress(ip);
+        getGeoInfo(ip);
+    } catch (error) {
+        console.error('Error fetching IP address:', error);
+    }
 }
 
 export const postFetch = async ({
@@ -24,7 +36,6 @@ export const postFetch = async ({
     onError = defaultErrorHandler
 }) => {
 
-    const token = localStorage.getItem('authToken');
     let headers = {
         'Content-Type': 'application/json',
     }
@@ -52,7 +63,6 @@ export const deleteFetch = async ({
     callback, 
     onError = defaultErrorHandler
 }) => {
-    const token = localStorage.getItem('authToken');
     fetch(`${API_URL}${url}`, {
         method:'DELETE',
         headers: {
